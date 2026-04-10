@@ -15,3 +15,5 @@ yarn-debug.log*
 
 # mac
 .DS_Store
+
+.idea/
