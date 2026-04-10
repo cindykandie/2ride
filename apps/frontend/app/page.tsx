@@ -2,20 +2,30 @@ import Image from "next/image";
 import EventCard from "@/components/EventCard";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import { EVENTS_API_URL } from "@/lib/api";
 
 type EventItem = {
   id: string | number;
   title: string;
+  description?: string;
+  image?: string;
+  location?: string;
   date: string;
+  time?: string;
 };
 
 async function getEvents(): Promise<EventItem[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+    const res = await fetch(EVENTS_API_URL, {
       cache: "no-store",
     });
 
-    if (!res.ok) throw new Error("Failed to fetch");
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(
+        `Failed to fetch events from ${EVENTS_API_URL} (${res.status} ${res.statusText})${body ? `: ${body}` : ""}`
+      );
+    }
 
     const data = await res.json();
     return Array.isArray(data) ? data : [];
